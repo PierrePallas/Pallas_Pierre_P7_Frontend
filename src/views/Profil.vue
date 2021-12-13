@@ -44,7 +44,7 @@ export default {
 
     data() {
     return{
-      approuvedConnexion: false,          // on déclare une varibale de type boléen, false par défault (contiendra la validation comme quoi un utilisateur est authentifié)
+      approuvedConnexion: false, 
       sessionUserId: 0,
       sessionUserAcces:0,
       userProfil: [],
@@ -55,10 +55,10 @@ export default {
   },
   mounted(){
     if(this.approuvedConnexion === true) {
-      const token = JSON.parse(localStorage.groupomaniaUser).token                            // on récupère le token dans le localstorage
-      let decodedToken = jwt.verify(token, process.env.VUE_APP_RANDOM_TOKEN_SECRET);        // on décode le token avec la fonction verify qui prend le token et la clé secrète
-      this.sessionUserId = decodedToken.userId                                                // on récupère le UserId
-      this.sessionUserAcces = decodedToken.niveau_acces                                       // on récupère le niveau d'acces
+      const token = JSON.parse(localStorage.groupomaniaUser).token                            
+      let decodedToken = jwt.verify(token, process.env.VUE_APP_RANDOM_TOKEN_SECRET);        
+      this.sessionUserId = decodedToken.userId                                               
+      this.sessionUserAcces = decodedToken.niveau_acces                                     
       this.getUserProfil();
     }
   },
@@ -68,7 +68,7 @@ export default {
       if(localStorage.groupomaniaUser == undefined){
         this.approuvedConnexion = false;
         console.log('Utilisateur non connecté !');
-        this.$router.push({ name:'Home' })
+        this.$router.push({ name:'/' })
       } else {
         this.approuvedConnexion = true;
         console.log('Utilisateur connecté !');
@@ -78,8 +78,7 @@ export default {
       const userId = this.sessionUserId;
       connectedClient.get(`api/user/${userId}`)
         .then(res => {
-          console.log(res)
-          this.userProfil = res.data;
+          this.userProfil = res.data[0];
         })
     },
     saveUser(){
@@ -96,7 +95,7 @@ export default {
         if(res.status === 200) {
             this.errorMessage = ""
             this.succesMessage = res.data.message;
-            setTimeout(function(){location.reload()}, 2000)
+            location.reload()
         }
       })
       .catch((error) => {

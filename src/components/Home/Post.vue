@@ -3,17 +3,15 @@
 <div>
    <div class="card gedf-card">
      <div v-if="approuvedConnexion" class="background d-flex flex-column">
-      <div v-if="posts == 0" class="mx-auto mt-6 mb-15" elevation="24" width="700">
-        <div class="mt-15 mb-15 mx-auto text-h4 text-center">Aucune publication trouvée...</div>
+      <div v-if="post == 0" class="mx-auto mt-6 mb-15" elevation="24" width="700">
+        <div class="mt-15 mb-15 mx-auto text-h4 text-center">Aucune publication</div>
       </div>
      </div>
-                  <div v-for="post in posts" :key="post.postId">  
-                    <div class="card-header">
+                
+                  <div v-for="post in posts" :key="post.id">
+                    <div class="card-header" >
                         <div class="d-flex justify-content-between align-items-center" >
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="mr-2">
-                                    <img class="rounded-circle" width="45" src="https://picsum.photos/50/50" alt="">
-                                </div>
                                 <div class="ml-2">
                                     <div class="h5 m-0"></div>
                                     <div class="h7">{{post.user_lastname}}</div>
@@ -26,9 +24,9 @@
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
                                         <div class="h6 dropdown-header">Configuration</div>
-                                        <div v-on:click="mo" class="dropdown-item">Modifier
-                                        </div>
-                                        <div v-on:click="deleteOnePost()" class="dropdown-item">Supprimer
+                                        <router-link :to="'/EditPost/' + post.id" class="dropdown-item">Modifier
+                                        </router-link>
+                                        <div v-on:click="deleteOnePost(post.id)" class="dropdown-item">Supprimer
                                         </div>
                                     </div>
                                 </div>
@@ -41,13 +39,15 @@
                         <p class="card-text">
                             {{post.message}}
                         </p>
+                    </div>
                     <div class="card-footer">
                         <a class="card-link text-danger"><i class="fa fa-gittip"></i> {{post.likes}} Like</a>
-                        <a href="#" class="card-link text-danger"><i class="fa fa-comment"></i> Commentaire</a>
+                        <a to=""> class="card-link text-danger"><i class="fa fa-comment"></i> Commentaire</a>
                     </div>
-                  </div>
-                </div>
-   </div>
+                  </div>   
+                
+                
+</div>
 </div>
 </template>
 
@@ -72,7 +72,7 @@ export default {
         getAllPosts(){
             connectedClient.get("/api/post/")          
             .then(res => {
-                this.posts = res.data[0]; 
+                this.posts = res.data; 
                 console.log(res.data)                                                                      
             })
         },
@@ -88,18 +88,17 @@ export default {
           connectedClient.get(`/api/post/${postId}`)
         },
 
-        deleteOnePost() {
-          const postId = this.post.postId;
+        deleteOnePost(postId) {
           connectedClient.delete(`/api/post/${postId}`)
           .then((res) => {
             if(res.status === 200) {
-              location.href = '/Home';
+              location.reload();
             }
           })
         },
 
         // Like
-        modifyLike(){                                         // fonction qui gère la création ou la modification d'un LIKE sur une publication
+        modifyLike(){                                      
       const like = this.post.like;
       if(like === 2){
         const userId = this.sessionUserId;
@@ -161,7 +160,7 @@ export default {
     },
 
     // Commentaire
-    createComment(){                                    // fonction qui gère la création d'un commentaire pour une publication
+    createComment(){                                    
       const userId = this.sessionUserId;
       const postId = this.post.postId;
       const message = this.$refs.message.value;
@@ -181,7 +180,7 @@ export default {
             this.message = error.response.data.error;
       })
     },
-    deleteComment(commentId){                                  // fonction qui gère la suppression d'un commentaire en fonction du niveau d'acces et du userId
+    deleteComment(commentId){                                 
       const comment = commentId;
       connectedClient.delete(`/api/comment/${comment}`)
       .then((res) => {

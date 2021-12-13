@@ -4,6 +4,7 @@ import Register from "@/views/Auth/Register.vue";
 import Home from "../views/Home.vue";
 import Profil from "../views/Profil.vue";
 import Login from "../components/Home/Login.vue";
+import EditPost from "../components/Home/EditPost.vue";
 
 const routes = [
   {
@@ -34,6 +35,11 @@ const routes = [
     path: "/Profil",
     name: "Profil",
     component: Profil,
+  },
+  {
+    path: "/EditPost/:id",
+    name: "EditPost",
+    component: EditPost,
   },
 ];
 

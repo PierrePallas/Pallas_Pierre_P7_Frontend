@@ -51,25 +51,25 @@ export default {
 
     data() {
     return{
-      approuvedConnexion: false,      // on déclare une varibale de type boléen, false par défault (contiendra la validation comme quoi un utilisateur est authentifié)
-      sessionUserId: 0,               // on déclare une varibale de type nombre, 0 par défault (contiendra le userId du token de la session utilisateur)
-      sessionUserAcces: 0,            // on déclare une varibale de type nombre, 0 par défault (contiendra le niveau d'acces du token de la session utilisateur)
-      message: ""                     // on déclare une varibale de type string, vide par défault (contiendra les messages d'erreur envoyé par le back)
+      approuvedConnexion: false,      
+      sessionUserId: 0,               
+      sessionUserAcces: 0,            
+      message: ""                     
     };
   },
-  created(){                          // hook de cycle de vie qui intervient avant le hook mounted et vérifie la session utilisateur (Item dans le localStorage)
+  created(){                          
     this.connectedUser()
   },
   mounted(){
     if(this.approuvedConnexion === true) {
-      const token = JSON.parse(localStorage.groupomaniaUser).token                            // on récupère le token dans le localstorage
-      let decodedToken = jwt.verify(token, process.env.VUE_APP_RANDOM_TOKEN_SECRET);        // on décode le token avec la fonction verify qui prend le token et la clé secrète
-      this.sessionUserId = decodedToken.userId                                                // on récupère le UserId                                       // on récupère le niveau d'acces
+      const token = JSON.parse(localStorage.groupomaniaUser).token                            
+      let decodedToken = jwt.verify(token, process.env.VUE_APP_RANDOM_TOKEN_SECRET);        
+      this.sessionUserId = decodedToken.userId                                               
     }
   },
   
   methods: {
-    connectedUser(){                                        // fonction de vérification de la session utilisateur (Item dans le localStorage)
+    connectedUser(){                                        // vérification de la session utilisateur
       if(localStorage.groupomaniaUser == undefined){
         this.approuvedConnexion = false;
         console.log('Utilisateur non connecté !');
@@ -79,29 +79,33 @@ export default {
         console.log('Utilisateur connecté !');
       }
     },
-    newPost(){                                     // fonction qui gère la création d'une nouvelle publication (requête)
+    newPost(){                                     // création d'une nouvelle publication 
       const user_id = this.sessionUserId;
       const message = this.$refs.message.value;
-      const post_image = this.$refs.post_image.files[0];
-
-      const fileName = this.$refs.uploadImage.value;
-      const lastDot = fileName.lastIndexOf(".") + 1;
-      const extensionFile = fileName.substr(lastDot, fileName.length).toLowerCase();
-    
-      if (extensionFile=="jpg" || extensionFile=="jpeg" || extensionFile=="png" || post_image === undefined){
-          let formData = new FormData();
-          formData.append("user_id", user_id);
-          formData.append("message", message);
-          formData.append("image", post_image);
+      let formData = new FormData();
+      
+      if (this.$refs.post_image){
+        const post_image = this.$refs.post_image.files[0];
+        // const fileName = this.$refs.post_image.value;
+        // const lastDot = fileName.lastIndexOf(".") + 1;
+        // const extensionFile = fileName.substr(lastDot, fileName.length).toLowerCase();
+        formData.append("image", post_image);
+      }
+          
+        formData.append("user_id", user_id);
+        formData.append("message", message);
+        // formData.append("date_post", this.dateFormat(new Date()))
+          
           connectedClient.post('/api/post/', formData)
-          .then((res) => {
-            if (res.status === 201){
-              setTimeout(function(){location.reload()}, 2000)
-            }
-            }
-          ) 
-      }    
-    }
+          .then(() => {
+              location.reload()}
+          )    
+    },
+    dateFormat(date){                                                       
+            const event = new Date(date);
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+            return event.toLocaleDateString('fr-FR', options);
+        }
   }
 }
 </script>
