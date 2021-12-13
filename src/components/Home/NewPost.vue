@@ -94,7 +94,7 @@ export default {
           
         formData.append("user_id", user_id);
         formData.append("message", message);
-        // formData.append("date_post", this.dateFormat(new Date()))
+        formData.append("date_post", this.dateFormat(new Date().toISOString().slice(0, 19).replace('T', ' ')));
           
           connectedClient.post('/api/post/', formData)
           .then(() => {

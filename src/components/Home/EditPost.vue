@@ -13,7 +13,7 @@
                         <div class="tab-content" id="myTabContent">
                             <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
                                 <div class="form-group">
-                                    <textarea class="form-control" id="message" ref="message" rows="3" placeholder="{{post.message}}" :value="post.message" required></textarea>
+                                    <textarea class="form-control" id="message" ref="message" rows="3" :value="post.message" required></textarea>
                                 </div> 
                             </div>
                         </div>
@@ -46,7 +46,9 @@ export default ({
             post: [],                                                                  
     }
     },
-    
+    created(){
+    this.connectedUser()
+    },
     mounted(){
     if(this.approuvedConnexion === true) {
       const token = JSON.parse(localStorage.groupomaniaUser).token                            
@@ -59,8 +61,19 @@ export default ({
 
     methods: {
     
+        connectedUser(){
+      if(localStorage.groupomaniaUser == undefined){
+        this.approuvedConnexion = false;
+        console.log('Utilisateur non connecté !');
+        this.$router.push({ name:'/' })
+      } else {
+        this.approuvedConnexion = true;
+        console.log('Utilisateur connecté !');
+        }
+        },
+        
         getOnePost() {
-          const postId = this.$route.params.id;
+          const postId = this.$route.params.id;  
           connectedClient.get(`/api/post/${postId}`)
           .then(res => {
           this.post = res.data[0];
@@ -69,9 +82,9 @@ export default ({
         },
 
         updatePost() {
-          const userId = this.sessionUserId; 
+          const postId = this.$route.params.id;  
           const message = this.$refs.message.value; 
-          connectedClient.put(`api/user/${userId}`, {
+          connectedClient.put(`api/post/${postId}`, {
               message
             })
         .then((res) => {
