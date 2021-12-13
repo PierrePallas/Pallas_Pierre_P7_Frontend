@@ -80,7 +80,7 @@ export default {
       }
     },
     newPost(){                                     // fonction qui gère la création d'une nouvelle publication (requête)
-      const userId = this.sessionUserId;
+      const user_id = this.sessionUserId;
       const message = this.$refs.message.value;
       const post_image = this.$refs.post_image.files[0];
 
@@ -90,13 +90,13 @@ export default {
     
       if (extensionFile=="jpg" || extensionFile=="jpeg" || extensionFile=="png" || post_image === undefined){
           let formData = new FormData();
-          formData.append("userId", userId);
+          formData.append("user_id", user_id);
           formData.append("message", message);
           formData.append("image", post_image);
           connectedClient.post('/api/post/', formData)
           .then((res) => {
             if (res.status === 201){
-              this.$router.go();
+              setTimeout(function(){location.reload()}, 2000)
             }
             }
           ) 

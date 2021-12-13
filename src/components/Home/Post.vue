@@ -3,7 +3,7 @@
 <div>
    <div class="card gedf-card">
      <div v-if="approuvedConnexion" class="background d-flex flex-column">
-      <div v-if="publication == 0" class="mx-auto mt-6 mb-15" elevation="24" width="700">
+      <div v-if="posts == 0" class="mx-auto mt-6 mb-15" elevation="24" width="700">
         <div class="mt-15 mb-15 mx-auto text-h4 text-center">Aucune publication trouvée...</div>
       </div>
      </div>
@@ -59,7 +59,7 @@ export default {
          
     data(){
         return {
-            post: [],
+            posts: [],
             commentaires: []                                                                   
     }
     },
@@ -72,7 +72,7 @@ export default {
         getAllPosts(){
             connectedClient.get("/api/post/")          
             .then(res => {
-                this.post = res.data[0]; 
+                this.posts = res.data[0]; 
                 console.log(res.data)                                                                      
             })
         },

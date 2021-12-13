@@ -5,23 +5,23 @@
 <div v-if="approuvedConnexion" class="container rounded bg-white mt-5 mb-5">
     <div class="row">
         <div class="col-md-3 border-right">
-            <div class="d-flex flex-column align-items-center text-center p-3 py-5"><img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span class="font-weight-bold">Edogaru</span><span class="text-black-50">{{ userProfil.user_email }}</span><span> </span></div>
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5">{{userProfil.user_firstname}}</div>
         </div>
-        <form class="col-md-5 border-right" @submit.prevent = saveUser()>
+        <form class="col-md-5 border-right">
             <div class="p-3 py-5">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="text-right">Mon profil</h4>
                 </div>
                 <div class="row mt-2">
-                    <div class="col-md-6"><label class="labels">Nom</label><input type="text" class="form-control" placeholder="{{userProfil.user_lastname}}" id="nom" ref="nom" :value="userProfil.user_lastname"></div>
-                    <div class="col-md-6"><label class="labels">Prénom</label><input type="text" class="form-control" value="" placeholder="Prénom"></div>
+                    <div class="col-md-6"><label class="labels">Nom</label><input type="text" class="form-control" placeholder="Nom" id="user_lastname" ref="user_lastname" :value="userProfil.user_lastname"></div>
+                    <div class="col-md-6"><label class="labels">Prénom</label><input type="text" class="form-control" placeholder="Prénom" id="user_firstname" ref="user_firstname" :value="userProfil.user_firstname"></div>
                 </div>
                 <div class="row mt-3">
                     
-                    <div class="col-md-12"><label class="labels">Adresse mail</label><input type="text" class="form-control" placeholder="Adresse mail" value=""></div>
+                    <div class="col-md-12"><label class="labels">Adresse mail</label><input type="text" class="form-control" placeholder="Adresse mail" id="user_email" ref="user_email" :value="userProfil.user_email"></div>
         
                 </div>
-                <div class="mt-5 text-center"><button class="btn btn-danger profile-button" type="submit">Sauvegarder les modifications</button></div>
+                <div class="mt-5 text-center"><button v-on:click="saveUser()" class="btn btn-danger profile-button" type="submit">Sauvegarder les modifications</button></div>
             </div>
         </form>
     </div>
@@ -48,8 +48,6 @@ export default {
       sessionUserId: 0,
       sessionUserAcces:0,
       userProfil: [],
-      errorMessage: "",
-      succesMessage: ""
     };
   },
   created(){
@@ -80,21 +78,19 @@ export default {
       const userId = this.sessionUserId;
       connectedClient.get(`api/user/${userId}`)
         .then(res => {
+          console.log(res)
           this.userProfil = res.data;
-          this.userProfil.password = "";
         })
     },
     saveUser(){
     const userId = this.sessionUserId;
-      const user_lastname = this.$refs.nom.value;
-      const user_firstname = this.$refs.prenom.value;
-      const user_email = this.$refs.email.value;
-      const user_password = this.$refs.password.value;
+      const user_lastname = this.$refs.user_lastname.value;
+      const user_firstname = this.$refs.user_firstname.value;
+      const user_email = this.$refs.user_email.value;
       connectedClient.put(`api/user/${userId}`, {
         user_lastname,
         user_firstname,
-        user_email, 
-        user_password,
+        user_email
       })
       .then((res) => {
         if(res.status === 200) {
