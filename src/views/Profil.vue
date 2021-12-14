@@ -5,7 +5,9 @@
 <div v-if="approuvedConnexion" class="container rounded bg-white mt-5 mb-5">
     <div class="row">
         <div class="col-md-3 border-right">
-            <div class="d-flex flex-column align-items-center text-center p-3 py-5">{{userProfil.user_firstname}}</div>
+            <div class="d-flex flex-column align-items-center text-center p-3 py-5">Vos informations :
+              <span class="text-danger">{{userProfil.user_lastname}} {{userProfil.user_firstname}}</span>
+            <span class="text-danger">{{userProfil.user_email}}</span></div>
         </div>
         <form class="col-md-5 border-right">
             <div class="p-3 py-5">
@@ -22,6 +24,7 @@
         
                 </div>
                 <div class="mt-5 text-center"><button v-on:click="saveUser()" class="btn btn-danger profile-button" type="submit">Sauvegarder les modifications</button></div>
+                <div class="mt-5 text-center"><button v-on:click="deleteUser()" class="btn btn-danger profile-button" type="submit">Supprimer le profil</button></div>
             </div>
         </form>
     </div>
@@ -76,7 +79,7 @@ export default {
     },
     getUserProfil(){
       const userId = this.sessionUserId;
-      connectedClient.get(`api/user/${userId}`)
+      connectedClient.get(`/api/user/${userId}`)
         .then(res => {
           this.userProfil = res.data[0];
         })
@@ -102,6 +105,25 @@ export default {
             this.errorMessage = error.response.data.error;
       })
     },
+
+    deleteUser(){
+      if(window.confirm("ATTENTION : La suppression de votre compte est définitive ! Voulez-vous vraiment supprimer votre compte ?")){
+        const userId = this.sessionUserId;
+        connectedClient.delete(`/api/user/${userId}`)
+        .then((res) => {
+          if(res.status === 200) {
+            this.succesMessage = res.data.message;
+            localStorage.removeItem('groupomaniaUser');
+            location.href = '/';
+          }
+        })
+        .catch((error) => {
+            this.errorMessage = error.response.data.error;
+            location.reload()
+        })
+      }
+    }
   }
+  
 }
 </script>

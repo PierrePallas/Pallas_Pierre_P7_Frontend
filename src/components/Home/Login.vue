@@ -2,7 +2,7 @@
 <div>
 <main class="form-signin">  
     <form @submit.prevent = login()>
-        <img class="mb-4" src="" alt="" width="300" height="300">
+        <img class="mb-4" src="../../assets/logos/icon-above-font.png" alt="" width="300" height="300">
         <h1 class="h3 mb-3 fw-normal text-center">Connectez-vous !</h1>
         <input type="email" class="form-control" id="email" ref="email" placeholder="Email" required>
         <input type="password" class="form-control" id="password" ref="password"  placeholder="Mot de passe" required>
@@ -19,7 +19,7 @@ export default {
     name: "Login",
     data() {
         return {
-            message:""
+            message:"",
         }
     },
 

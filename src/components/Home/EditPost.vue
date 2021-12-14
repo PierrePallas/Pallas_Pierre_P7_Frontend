@@ -43,7 +43,8 @@ export default ({
             approuvedConnexion: false, 
             sessionUserId: 0,
             sessionUserAcces:0,
-            post: [],                                                                  
+            post: [],
+            userProfil: [],                                                                  
     }
     },
     created(){
@@ -56,7 +57,17 @@ export default ({
       this.sessionUserId = decodedToken.userId                                                
       this.sessionUserAcces = decodedToken.niveau_acces                                      
       this.getOnePost();
+      const userId = this.sessionUserId;
+    connectedClient.get(`/api/user/${userId}`)
+    .then(res => {
+    this.userProfil = res.data[0];
+    console.log( "User Profil", res.data)
+    })
     }
+
+    
+    
+        
   },
 
     methods: {
@@ -81,21 +92,28 @@ export default ({
         })
         },
 
+        
+
+        
         updatePost() {
-          const postId = this.$route.params.id;  
-          const message = this.$refs.message.value; 
-          connectedClient.put(`api/post/${postId}`, {
-              message
+            const postId = this.$route.params.id;
+            console.log("Update", this.userProfil)
+            if (this.userProfil.user_id === this.post.user_id || this.userProfil.user_id === 1) {
+            
+            const message = this.$refs.message.value;
+            console.log("message", message) 
+            connectedClient.put(`api/post/${postId}`, {
+            message
             })
-        .then((res) => {
-        if(res.status === 200) {
+            .then((res) => {
+            if(res.status === 200) {
             location.reload()
-        }
-      })
-      .catch((error) => {
+            }
+            })
+            .catch((error) => {
             this.errorMessage = error.response.data.error;
-      })
-        }
+            })}
+    }
     }
 })
 </script>

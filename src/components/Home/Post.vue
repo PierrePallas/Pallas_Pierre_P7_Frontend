@@ -1,6 +1,7 @@
 <template>
 <!--- \\\\\\\Post-->
 <div>
+  <div v-if="!approuvedConnexion" to="/"></div>
    <div class="card gedf-card">
      <div v-if="approuvedConnexion" class="background d-flex flex-column">
       <div v-if="post == 0" class="mx-auto mt-6 mb-15" elevation="24" width="700">
@@ -14,7 +15,7 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="ml-2">
                                     <div class="h5 m-0"></div>
-                                    <div class="h7">{{post.user_lastname}}</div>
+                                    <div class="h7">Publié par : {{post.user_lastname}} {{post.user_firstname}}</div>
                                 </div>
                             </div>
                             <div>
@@ -42,7 +43,7 @@
                     </div>
                     <div class="card-footer">
                         <a class="card-link text-danger"><i class="fa fa-gittip"></i> {{post.likes}} Like</a>
-                        <a to=""> class="card-link text-danger"><i class="fa fa-comment"></i> Commentaire</a>
+                        <a to="" class="card-link text-danger"><i class="fa fa-comment"></i> Commenter cette publication</a>
                     </div>
                   </div>   
                 
@@ -53,6 +54,7 @@
 
 <script>
 import {connectedClient} from "@/services/auth.js" 
+import jwt from "jsonwebtoken"
 
 export default {
     name: "Post",
@@ -60,12 +62,20 @@ export default {
     data(){
         return {
             posts: [],
-            commentaires: []                                                                   
+            comments: []                                                                   
     }
     },
-
+    created(){                          
+    this.connectedUser()
+    },
     mounted() {                                     
-        this.getAllPosts();                     
+        this.getAllPosts();
+        // this.getAllComments();
+        if(this.approuvedConnexion === true) {
+      const token = JSON.parse(localStorage.groupomaniaUser).token                            
+      let decodedToken = jwt.verify(token, process.env.VUE_APP_RANDOM_TOKEN_SECRET);        
+      this.sessionUserId = decodedToken.userId                                               
+    }                     
     },
 
     methods: {
@@ -76,6 +86,17 @@ export default {
                 console.log(res.data)                                                                      
             })
         },
+
+        connectedUser(){                                        // vérification de la session utilisateur
+      if(localStorage.groupomaniaUser == undefined){
+        this.approuvedConnexion = false;
+        console.log('Utilisateur non connecté !');
+        this.$router.push({ name:'Home' })
+      } else {
+        this.approuvedConnexion = true;
+        console.log('Utilisateur connecté !');
+        }
+      },
         
         dateFormat(date){                                                       
             const event = new Date(date);
@@ -160,6 +181,15 @@ export default {
     },
 
     // Commentaire
+    // getAllComments(){
+    //     const postId = this.$route.params.id;
+    //     connectedClient.get(`/api/comment/${postId}/comments`)          
+    //     .then(res => {
+    //       this.comments = res.data; 
+    //       console.log("Commentaires", res.data)                                                                      
+    //         })
+    // },
+
     createComment(){                                    
       const userId = this.sessionUserId;
       const postId = this.post.postId;

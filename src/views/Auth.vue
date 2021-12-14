@@ -5,7 +5,7 @@
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
     <main class="px-3">
         <h1 class="text-center">Bienvenue sur votre réseau social Groupomania !</h1>
-        <p class="text-center"><img src="" alt="" width="300" height="300"></p>
+        <p class="text-center"><img src="../assets/logos/icon-above-font.png" alt="" width="300" height="300"></p>
         <div class="d-grid gap-2 col-6 mx-auto">
             <router-link to="/Home" class="btn btn-lg btn-danger fw-bold">Connexion</router-link>
             <router-link to="/register" class="btn btn-lg btn-danger fw-bold">Inscription</router-link>

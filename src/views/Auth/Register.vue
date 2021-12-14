@@ -2,7 +2,7 @@
   <div>
        <Nav/>
     <main class="form-signin">
-        <img src="" alt="Groupomania logo">
+        <img src="../../assets/logos/icon-above-font.png" alt="Groupomania logo" width="300" height="300">
         <form @submit.prevent = signup()>
             <h1 class="h3 mb-3 fw-normal text-center">Inscrivez-vous !</h1>
             <input class="form-control" id="nom" ref="nom" type="text" placeholder="Nom"  title="Renseignez votre nom">
