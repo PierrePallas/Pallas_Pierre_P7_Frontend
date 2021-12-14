@@ -70,7 +70,7 @@
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
                                         <div class="h6 dropdown-header">Configuration</div>
-                                        <div class="dropdown-item">Supprimer
+                                        <div class="dropdown-item" v-on:click="deleteOnePost()">Supprimer
                                         </div>
                                     </div>
                                 </div>
@@ -187,7 +187,23 @@ export default ({
             return event.toLocaleDateString('fr-FR', options);
         }, 
 
-    }
+    },
+
+    deleteOnePost(){
+      if(window.confirm("ATTENTION : La suppression de votre compte est définitive ! Voulez-vous vraiment supprimer votre compte ?")){
+        const postId = this.$route.params.id;
+        if (this.userProfil.user_id === this.post.user_id || this.userProfil.user_id === 1) {
+            connectedClient.delete(`api/post/${postId}`)
+            .then((res) => {
+            if(res.status === 200) {
+            location.reload()
+            }
+            })
+            .catch((error) => {
+            this.errorMessage = error.response.data.error;
+            })
+        }
+      }}
 })
 </script>
 
