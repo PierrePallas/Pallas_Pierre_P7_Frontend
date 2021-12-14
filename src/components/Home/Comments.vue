@@ -1,13 +1,13 @@
 <template>
 <div>
     <HomeNav/>
-<div class="card gedf-card">Commentaires de la publication !
+<div class="card gedf-card">
                     <div class="card-header" >
                         <div class="d-flex justify-content-between align-items-center" >
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="ml-2">
                                     <div class="h5 m-0"></div>
-                                    <div class="h7">Publié par : {{post.user_lastname}} {{post.user_firstname}}</div>
+                                    <div class="h7">Publié par : {{userProfil.user_lastname}} {{userProfil.user_firstname}}</div>
                                 </div>
                             </div>
                             <div>
@@ -21,7 +21,6 @@
 
                     </div>
                     <div class="card-body">
-                        <div class="text-muted h7 mb-2"> <i class="fa fa-clock-o"></i>{{dateFormat(post.date_post)}}</div>
                         <p class="card-text">
                             {{post.message}}
                         </p>
@@ -70,7 +69,7 @@
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
                                         <div class="h6 dropdown-header">Configuration</div>
-                                        <div class="dropdown-item" v-on:click="deleteOnePost()">Supprimer
+                                        <div class="dropdown-item">Supprimer
                                         </div>
                                     </div>
                                 </div>
@@ -105,7 +104,7 @@ export default ({
             sessionUserAcces:0,
             post: [],
             userProfil: [],
-            comment: [],                                                                  
+            comments: [],                                                                  
     }
     },
     created(){
@@ -118,16 +117,14 @@ export default ({
       this.sessionUserId = decodedToken.userId                                                
       this.sessionUserAcces = decodedToken.niveau_acces                                      
       this.getOnePost();
+      this.getAllComments();
       const userId = this.sessionUserId;
     connectedClient.get(`/api/user/${userId}`)
     .then(res => {
     this.userProfil = res.data[0];
-    console.log( "User Profil", res.data)
+    console.log("User Profil", res.data)
     })
     }
-
-    
-    
         
   },
 
@@ -149,20 +146,21 @@ export default ({
           connectedClient.get(`/api/post/${postId}`)
           .then(res => {
           this.post = res.data[0];
-          console.log( res.data)
+          console.log("Post", res.data)
         })
         },
 
         getAllComments(){
-            const postId = this.$route.params.id; 
-            connectedClient.get(`/api/comment/${postId}`)          
+            const postId = this.$route.params.id;
+            console.log(postId) 
+            connectedClient.get(`/api/comment/${postId}/comments`)          
             .then(res => {
-                this.comment = res.data; 
+                this.comments = res.data; 
                 console.log("Commentaires",res.data)                                                                      
             })
         },
 
-        newComment(){                                     // création d'une nouvelle publication 
+        newComment(){                           // création d'un nouveau commentaire 
         const author_id = this.sessionUserId;
         const message = this.$refs.message.value;
         const author_firstname = this.userProfil.user_firstname;
@@ -170,16 +168,16 @@ export default ({
         const post_id = this.$route.params.id;
         let formData = new FormData();
          
-        formData.append("post_id", post_id);
-        formData.append("author_id", author_id);
-        formData.append("message", message);
-        formData.append("author_firstname", author_firstname);
-        formData.append("author_lastname", author_lastname);
-          connectedClient.post(`/api/comment/${post_id}`, formData)
-          .then(() => {
+            formData.append("post_id", post_id);
+            formData.append("author_id", author_id);
+            formData.append("message", message);
+            formData.append("author_firstname", author_firstname);
+            formData.append("author_lastname", author_lastname);
+            connectedClient.post(`/api/comment/${post_id}/`, formData)
+            .then(() => {
               location.reload()}
           )    
-    },
+        },
 
         dateFormat(date){                                                       
             const event = new Date(date);
@@ -187,10 +185,10 @@ export default ({
             return event.toLocaleDateString('fr-FR', options);
         }, 
 
-    },
+    
 
     deleteOnePost(){
-      if(window.confirm("ATTENTION : La suppression de votre compte est définitive ! Voulez-vous vraiment supprimer votre compte ?")){
+      if(window.confirm("ATTENTION : La suppression de votre post est définitive ! Voulez-vous vraiment supprimer votre post ?")){
         const postId = this.$route.params.id;
         if (this.userProfil.user_id === this.post.user_id || this.userProfil.user_id === 1) {
             connectedClient.delete(`api/post/${postId}`)
@@ -204,6 +202,7 @@ export default ({
             })
         }
       }}
+    }
 })
 </script>
 

@@ -84,17 +84,17 @@ export default {
       const message = this.$refs.message.value;
       let formData = new FormData();
       
-      if (this.$refs.post_image){
-        const post_image = this.$refs.post_image.files[0];
-        // const fileName = this.$refs.post_image.value;
-        // const lastDot = fileName.lastIndexOf(".") + 1;
-        // const extensionFile = fileName.substr(lastDot, fileName.length).toLowerCase();
-        formData.append("image", post_image);
-      }
+      // if (this.$refs.post_image){
+      //   const post_image = this.$refs.post_image.files[0];
+      //   // const fileName = this.$refs.post_image.value;
+      //   // const lastDot = fileName.lastIndexOf(".") + 1;
+      //   // const extensionFile = fileName.substr(lastDot, fileName.length).toLowerCase();
+      //   formData.append("image", post_image);
+      // }
           
         formData.append("user_id", user_id);
         formData.append("message", message);
-        formData.append("date_post", this.dateFormat(new Date().toISOString().slice(0, 19).replace('T', ' ')));
+        // formData.append("date_post", this.dateFormat(new Date().toISOString().slice(0, 19).replace('T', ' ')));
           
           connectedClient.post('/api/post/', formData)
           .then(() => {
