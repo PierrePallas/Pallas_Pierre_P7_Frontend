@@ -43,7 +43,7 @@
                     </div>
                     <div class="card-footer">
                         <a class="card-link text-danger"><i class="fa fa-gittip"></i> {{post.likes}} Like</a>
-                        <a to="" class="card-link text-danger"><i class="fa fa-comment"></i> Commenter cette publication</a>
+                        <router-link :to="'/Comments/' + post.id" class="card-link text-danger"><i class="fa fa-comment"></i> Voir la discussion</router-link>
                     </div>
                   </div>   
                 

@@ -5,6 +5,7 @@ import Home from "../views/Home.vue";
 import Profil from "../views/Profil.vue";
 import Login from "../components/Home/Login.vue";
 import EditPost from "../components/Home/EditPost.vue";
+import Comments from "../components/Home/Comments.vue";
 
 const routes = [
   {
@@ -40,6 +41,11 @@ const routes = [
     path: "/EditPost/:id",
     name: "EditPost",
     component: EditPost,
+  },
+  {
+    path: "/Comments/:id",
+    name: "Comments",
+    component: Comments,
   },
 ];
 
