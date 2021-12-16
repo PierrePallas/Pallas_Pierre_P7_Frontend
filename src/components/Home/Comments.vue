@@ -10,23 +10,17 @@
                                     <div class="h7">Publié par : {{userProfil.user_lastname}} {{userProfil.user_firstname}}</div>
                                 </div>
                             </div>
-                            <div>
-                                <div class="dropdown">
-                                    <button class="btn btn-link dropdown-toggle text-danger" type="button" id="gedf-drop1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-ellipsis-h"></i>
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
                     </div>
                     <div class="card-body">
                         <p class="card-text">
-                            {{post.message}}
+                            {{post.message}}  
                         </p>
+                        <img class="mb-4" :src="image.image_url" alt="" width="500" height="300">
                     </div>
+                    
                     <div class="card-footer">
-                        <a class="card-link text-danger"><i class="fa fa-gittip"></i> {{post.likes}} Like</a>
                     </div>
                     <div class="card-body">
                         <div class="tab-content" id="myTabContent">
@@ -68,8 +62,7 @@
                                         <i class="fa fa-ellipsis-h"></i>
                                     </button>
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="gedf-drop1">
-                                        <div class="h6 dropdown-header">Configuration</div>
-                                        <div class="dropdown-item">Supprimer
+                                        <div class="dropdown-item" v-on:click="deleteComment(comment.id)">Supprimer
                                         </div>
                                     </div>
                                 </div>
@@ -104,7 +97,8 @@ export default ({
             sessionUserAcces:0,
             post: [],
             userProfil: [],
-            comments: [],                                                                  
+            comments: [],
+            image: [],                                                                  
     }
     },
     created(){
@@ -118,6 +112,7 @@ export default ({
       this.sessionUserAcces = decodedToken.niveau_acces                                      
       this.getOnePost();
       this.getAllComments();
+      this.getImage();
       const userId = this.sessionUserId;
     connectedClient.get(`/api/user/${userId}`)
     .then(res => {
@@ -150,6 +145,15 @@ export default ({
         })
         },
 
+        getImage(){
+          const postId = this.$route.params.id;   
+          connectedClient.get(`/api/post/image/${postId}`)
+          .then(res => {
+            this.image = res.data[0];
+            console.log("Images", res.data)
+          })
+        },
+
         getAllComments(){
             const postId = this.$route.params.id;
             console.log(postId) 
@@ -166,14 +170,14 @@ export default ({
         const author_firstname = this.userProfil.user_firstname;
         const author_lastname = this.userProfil.user_lastname;
         const post_id = this.$route.params.id;
-        let formData = new FormData();
-         
-            formData.append("post_id", post_id);
-            formData.append("author_id", author_id);
-            formData.append("message", message);
-            formData.append("author_firstname", author_firstname);
-            formData.append("author_lastname", author_lastname);
-            connectedClient.post(`/api/comment/${post_id}/`, formData)
+        
+            connectedClient.post(`/api/comment/${post_id}/`, {
+                author_id,
+                message,
+                author_firstname,
+                author_lastname,
+                post_id
+            })
             .then(() => {
               location.reload()}
           )    
@@ -187,21 +191,15 @@ export default ({
 
     
 
-    deleteOnePost(){
-      if(window.confirm("ATTENTION : La suppression de votre post est définitive ! Voulez-vous vraiment supprimer votre post ?")){
-        const postId = this.$route.params.id;
-        if (this.userProfil.user_id === this.post.user_id || this.userProfil.user_id === 1) {
-            connectedClient.delete(`api/post/${postId}`)
-            .then((res) => {
+    deleteComment(commentId) {
+          if (this.userProfil.user_id === commentId || this.userProfil.user_id === 1) {
+          connectedClient.delete(`/api/comment/${commentId}`)
+          .then((res) => {
             if(res.status === 200) {
-            location.reload()
+              location.reload();
             }
-            })
-            .catch((error) => {
-            this.errorMessage = error.response.data.error;
-            })
-        }
-      }}
+          })}
+        },
     }
 })
 </script>

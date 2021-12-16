@@ -97,8 +97,7 @@ export default ({
         
         updatePost() {
             const postId = this.$route.params.id;
-            console.log("Update", this.userProfil)
-            if (this.userProfil.user_id === this.post.user_id || this.userProfil.user_id === 1) {
+            if (this.userProfil.user_id === this.post.user_id) {
             
             const message = this.$refs.message.value;
             console.log("message", message) 

@@ -24,7 +24,7 @@
                             <div class="tab-pane fade" id="image" role="tabpanel" aria-labelledby="images-tab">
                                 <div class="form-group">
                                     <div class="custom-file">
-                                        <input type="file" accept="image/jpg, image/png, image/jpeg" class="custom-file-input" id="image" ref="image">
+                                        <input type="file" name="image" accept="image/jpg, image/png, image/jpeg" class="custom-file-input" id="image_url" ref="image_url">
                                         <label class="custom-file-label" for="customFile">Uploader une image</label>
                                     </div>
                                 </div>
@@ -82,24 +82,24 @@ export default {
     newPost(){                                     // création d'une nouvelle publication 
       const user_id = this.sessionUserId;
       const message = this.$refs.message.value;
+      const image_url = this.$refs.image_url.files[0]
       let formData = new FormData();
+
+      const fileName = this.$refs.image_url.value
+      const lastDot = fileName.lastIndexOf(".") + 1;
+      const extensionFile = fileName.substr(lastDot, fileName.length).toLowerCase();
       
-      // if (this.$refs.post_image){
-      //   const post_image = this.$refs.post_image.files[0];
-      //   // const fileName = this.$refs.post_image.value;
-      //   // const lastDot = fileName.lastIndexOf(".") + 1;
-      //   // const extensionFile = fileName.substr(lastDot, fileName.length).toLowerCase();
-      //   formData.append("image", post_image);
-      // }
-          
+      if (extensionFile=="jpg" || extensionFile=="jpeg" || extensionFile=="png" || image_url === undefined){
+        formData.append("image_url", image_url);
         formData.append("user_id", user_id);
         formData.append("message", message);
-        // formData.append("date_post", this.dateFormat(new Date().toISOString().slice(0, 19).replace('T', ' ')));
+      
           
           connectedClient.post('/api/post/', formData)
           .then(() => {
               location.reload()}
-          )    
+          )
+      }    
     },
     dateFormat(date){                                                       
             const event = new Date(date);
